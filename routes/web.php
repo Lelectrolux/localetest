@@ -13,3 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::prefix('{locale}')->middleware('setLocale')->group(function () {
+    Route::get('/', function () {})->name('root');
+});
+
+Route::get('/{any?}', function () {
+    // detect user browser language prefs and redirect accordingly
+    return redirect('somewhere');
+})->where('any', '.*');

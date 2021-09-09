@@ -80,7 +80,10 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => env('APP_DEFAULT_LOCALE', 'en'),
+
+    'default_locale' => env('APP_DEFAULT_LOCALE', 'en'),
+    'locales' => explode(',', env('APP_LOCALES', '')),
 
     /*
     |--------------------------------------------------------------------------
