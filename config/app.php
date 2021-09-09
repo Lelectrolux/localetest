@@ -80,7 +80,13 @@ return [
     |
     */
 
-    'locale' => 'en',
+    // this one will change when using app()->setLocale()
+    // so we can't use it as our "default_locale"
+    'locale' => env('APP_DEFAULT_LOCALE', 'en'),
+
+    'default_locale' => env('APP_DEFAULT_LOCALE', 'en'),
+    'other_locales' => explode(',', env('APP_OTHER_LOCALES', '')),
+    'allowed_locales' => explode(',', env('APP_ALLOWED_LOCALES', '')),
 
     /*
     |--------------------------------------------------------------------------

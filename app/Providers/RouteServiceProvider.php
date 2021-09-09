@@ -38,6 +38,7 @@ class RouteServiceProvider extends ServiceProvider
         $this->configureRateLimiting();
 
         $this->routes(function () {
+            // You probably don't need to localise any json api, but you could do the same if needed
             Route::prefix('api')
                 ->middleware('api')
                 ->namespace($this->namespace)
@@ -45,7 +46,27 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('web')
                 ->namespace($this->namespace)
-                ->group(base_path('routes/web.php'));
+                ->group(static function (): void {
+                    // Register routes with a locale segment first
+                    foreach (config()->get('app.other_locales') as $locale) {
+                        Route::middleware("setLocale:$locale")
+                            ->prefix($locale)
+                            ->name("$locale:") // Don't use other colons in your route name
+                            ->group(function () use ($locale) { // That use($locale) is important
+                                // We are doing the equivalent to Illuminate\Routing\RouteFileRegistrar:31
+                                require base_path('routes/web.php');
+                            });
+                    }
+
+                    // Then add the hidden locale routes
+                    $locale = config()->get('app.default_locale');
+                    Route::middleware("setLocale:$locale")
+                        ->name("$locale:")
+                        ->name("$locale:")
+                        ->group(function () use ($locale) { // That use($locale) is important
+                            require base_path('routes/web.php');
+                        });
+                });
         });
     }
 
